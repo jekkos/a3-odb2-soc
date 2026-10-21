@@ -1,0 +1,30 @@
+{
+  "name": "A3 PHEV HV SOC",
+  "version": "1.0.0",
+  "slug": "a3-odbd2-soc",
+  "description": "Reads HV SOC and available energy from Audi A3 PHEV via BLE ELM327",
+  "arch": ["armhf", "armv7", "aarch64", "amd64"],
+  "startup": "services",
+  "boot": "auto",
+  "privileged": ["NET_ADMIN", "BLUETOOTH"],
+  "network_mode": "host",
+  "options": {
+    "mac": "00:10:CC:4F:36:03",
+    "pid": "5B",
+    "mqtt_host": "core-mosquitto",
+    "mqtt_port": 1883,
+    "mqtt_username": "",
+    "mqtt_password": "",
+    "net_usable_kwh": 12.4
+  },
+  "schema": {
+    "mac": "str",
+    "pid": "str",
+    "mqtt_host": "str",
+    "mqtt_port": "int",
+    "mqtt_username": "str",
+    "mqtt_password": "str",
+    "net_usable_kwh": "float"
+  },
+  "healthcheck": "python3 -c \"import paho.mqtt; print('ok')\""
+}
