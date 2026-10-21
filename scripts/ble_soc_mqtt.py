@@ -72,6 +72,7 @@ def publish_mqtt(payload: str, online: bool, kwh_payload: Optional[str] = None) 
 
     try:
         client.publish(settings["availability_topic"], payload="online" if online else "offline", qos=1, retain=True)
+        publish_discovery(client, settings)
         if online:
             info = client.publish(settings["topic"], payload=payload, qos=1, retain=True)
             info.wait_for_publish(timeout=10)
@@ -81,6 +82,55 @@ def publish_mqtt(payload: str, online: bool, kwh_payload: Optional[str] = None) 
     finally:
         client.loop_stop()
         client.disconnect()
+
+
+def publish_discovery(client, settings: dict) -> None:
+    device = {
+        "identifiers": ["a3-odbd2-soc"],
+        "name": "A3 PHEV HV SOC",
+        "model": "40 TFSIe",
+        "manufacturer": "Audi",
+    }
+
+    soc_config = {
+        "name": "A3 PHEV HV SOC",
+        "unique_id": "a3_odbd2_soc_hv_soc",
+        "state_topic": settings["topic"],
+        "availability_topic": settings["availability_topic"],
+        "payload_available": "online",
+        "payload_not_available": "offline",
+        "value_template": "{{ value | float }}",
+        "device_class": "battery",
+        "state_class": "measurement",
+        "unit_of_measurement": "%",
+        "device": device,
+    }
+
+    kwh_config = {
+        "name": "A3 PHEV HV Available Energy",
+        "unique_id": "a3_odbd2_soc_hv_kwh",
+        "state_topic": settings["kwh_topic"],
+        "availability_topic": settings["availability_topic"],
+        "payload_available": "online",
+        "payload_not_available": "offline",
+        "value_template": "{{ value | float }}",
+        "state_class": "measurement",
+        "unit_of_measurement": "kWh",
+        "device": device,
+    }
+
+    client.publish(
+        f"homeassistant/sensor/{settings['topic'].replace('/', '_')}/config",
+        json.dumps(soc_config),
+        qos=1,
+        retain=True,
+    )
+    client.publish(
+        f"homeassistant/sensor/{settings['kwh_topic'].replace('/', '_')}/config",
+        json.dumps(kwh_config),
+        qos=1,
+        retain=True,
+    )
 
 
 def net_usable_kwh(value: Optional[str] = None) -> float:

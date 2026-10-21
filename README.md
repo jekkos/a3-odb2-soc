@@ -57,36 +57,7 @@ After installation, go to the add-on settings:
 | `car/a3/hv_soc/availability` | Online/offline status |
 | `car/a3/hv_kwh` | Estimated available energy (kWh) |
 
-## Home Assistant Sensors
-
-Add these to `configuration.yaml`:
-
-```yaml
-mqtt:
-  broker: core-mosquitto  # or your external broker
-
-sensor:
-  - name: "A3 PHEV HV SOC"
-    unique_id: a3_phev_hv_soc
-    state_topic: "car/a3/hv_soc"
-    availability_topic: "car/a3/hv_soc/availability"
-    payload_available: "online"
-    payload_not_available: "offline"
-    value_template: "{{ value | float }}"
-    device_class: battery
-    state_class: measurement
-    unit_of_measurement: "%"
-
-  - name: "A3 PHEV HV Available Energy"
-    unique_id: a3_phev_hv_available_energy
-    state_topic: "car/a3/hv_kwh"
-    availability_topic: "car/a3/hv_soc/availability"
-    payload_available: "online"
-    payload_not_available: "offline"
-    value_template: "{{ value | float }}"
-    state_class: measurement
-    unit_of_measurement: "kWh"
-```
+Sensors are automatically discovered by Home Assistant via MQTT Discovery. No manual configuration required.
 
 ## Updating
 
