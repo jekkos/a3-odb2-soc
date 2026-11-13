@@ -23,7 +23,7 @@ Reads HV SOC and available energy from Audi A3 PHEV via BLE ELM327 and exposes i
 
 1. Open HACS → Add-ons → Repositories
 2. Click **Add Repository**
-3. Paste: `https://github.com/<your-username>/a3-odbd2-soc`
+3. Paste: `https://github.com/jekkos/a3-odbd2-soc`
 4. Click **Add**
 5. Find **A3 PHEV HV SOC** and click **Install**
 
@@ -31,7 +31,7 @@ Reads HV SOC and available energy from Audi A3 PHEV via BLE ELM327 and exposes i
 
 1. Go to: **Settings → Add-ons → Add-on Store → Repositories**
 2. Click **Add Repository**
-3. Paste: `https://github.com/<your-username>/a3-odbd2-soc`
+3. Paste: `https://github.com/jekkos/a3-odbd2-soc`
 4. Click **Add**
 5. Find **A3 PHEV HV SOC** and click **Install**
 
@@ -41,13 +41,17 @@ After installation, go to the add-on settings:
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `mac` | BLE adapter MAC address | `00:10:CC:4F:36:03` |
-| `pid` | OBD PID to read | `5B` |
-| `mqtt_host` | MQTT broker hostname | `core-mosquitto` |
+| `ble_mac` | BLE adapter MAC address | `00:10:CC:4F:36:03` |
+| `obd_pid` | OBD PID to read (hex) | `5B` |
+| `read_wait` | Connection wait time (seconds) | `3.0` |
+| `read_retries` | Number of retries | `3` |
+| `mqtt_host` | MQTT broker hostname (leave empty for built-in) | `core-mosquitto` |
 | `mqtt_port` | MQTT broker port | `1883` |
-| `mqtt_username` | MQTT username (empty = anonymous) | |
-| `mqtt_password` | MQTT password (empty = anonymous) | |
+| `mqtt_username` | MQTT username (leave empty for anonymous) | |
+| `mqtt_password` | MQTT password (leave empty for anonymous) | |
 | `net_usable_kwh` | Net usable HV battery capacity in kWh | `12.4` |
+
+**Note:** The add-on automatically detects the built-in Mosquitto broker. Only configure `mqtt_host`, `mqtt_username`, and `mqtt_password` if you want to use an external broker.
 
 ## MQTT Topics
 
@@ -97,7 +101,8 @@ docker run -d --name a3-odbd2-soc \
   -e MQTT_HOST=your-broker \
   -e MQTT_USERNAME=your-username \
   -e MQTT_PASSWORD=your-password \
-  -e MAC=your-ble-mac \
+  -e BLE_MAC=your-ble-mac \
+  -e NET_USABLE_KWH=12.4 \
   a3-odbd2-soc
 ```
 

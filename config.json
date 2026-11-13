@@ -9,8 +9,10 @@
   "privileged": ["NET_ADMIN", "BLUETOOTH"],
   "network_mode": "host",
   "options": {
-    "mac": "00:10:CC:4F:36:03",
-    "pid": "5B",
+    "ble_mac": "00:10:CC:4F:36:03",
+    "obd_pid": "5B",
+    "read_wait": 3.0,
+    "read_retries": 3,
     "mqtt_host": "core-mosquitto",
     "mqtt_port": 1883,
     "mqtt_username": "",
@@ -18,8 +20,10 @@
     "net_usable_kwh": 12.4
   },
   "schema": {
-    "mac": "str",
-    "pid": "str",
+    "ble_mac": "str",
+    "obd_pid": "str",
+    "read_wait": "float",
+    "read_retries": "int",
     "mqtt_host": "str",
     "mqtt_port": "int",
     "mqtt_username": "str",

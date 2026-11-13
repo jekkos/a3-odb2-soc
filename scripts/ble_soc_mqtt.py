@@ -42,6 +42,13 @@ def env(name: str, default: str = "") -> str:
     return default
 
 
+def env_float(name: str, default: float) -> float:
+    raw = env(name)
+    if raw:
+        return float(raw)
+    return default
+
+
 def mqtt_settings() -> dict:
     topic = env("MQTT_TOPIC", "car/a3/hv_soc")
     return {
@@ -147,18 +154,24 @@ def kwh_from_soc(soc_pct: float, usable_kwh: float) -> str:
 
 async def main() -> int:
     parser = argparse.ArgumentParser(description="Publish the A3 PHEV HV SOC to MQTT.")
-    parser.add_argument("--mac", default="00:10:CC:4F:36:03")
-    parser.add_argument("--pid", default="5B")
-    parser.add_argument("--wait", type=float, default=3.0)
-    parser.add_argument("--retries", type=int, default=3)
+    parser.add_argument("--mac", default=None, help="BLE adapter MAC address")
+    parser.add_argument("--pid", default=None, help="OBD PID to read (hex)")
+    parser.add_argument("--wait", type=float, default=None, help="Connection wait time")
+    parser.add_argument("--retries", type=int, default=None, help="Number of retries")
     parser.add_argument("--net-kwh", default=None, help="Net usable HV battery capacity in kWh")
     parser.add_argument("--print", action="store_true", help="Also print the result")
     args = parser.parse_args()
 
+    mac = args.mac or env("BLE_MAC", "00:10:CC:4F:36:03")
+    pid = args.pid or env("OBD_PID", "5B")
+    wait_time = args.wait if args.wait is not None else env_float("READ_WAIT", 3.0)
+    retries = args.retries if args.retries is not None else int(env("READ_RETRIES", "3"))
+    net_kwh = args.net_kwh or env("NET_USABLE_KWH")
+
     load_env_file(ENV_FILE)
 
     try:
-        result = await read_soc(args.mac, args.pid, args.wait, args.retries)
+        result = await read_soc(mac, pid, wait_time, retries)
     except Exception as exc:
         payload = "offline"
         try:
@@ -170,7 +183,7 @@ async def main() -> int:
         return 1
 
     payload = str(result["soc_pct"])
-    usable_kwh = net_usable_kwh(args.net_kwh)
+    usable_kwh = net_usable_kwh(net_kwh)
     kwh_payload = kwh_from_soc(float(payload), usable_kwh)
     publish_mqtt(payload, online=True, kwh_payload=kwh_payload)
 
