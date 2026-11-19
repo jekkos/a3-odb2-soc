@@ -29,7 +29,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          platforms: linux/armv7,linux/arm64,linux/amd64
+          platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true
           tags: |
             ghcr.io/jekkos/a3-odbd2-soc:latest
