@@ -2,7 +2,7 @@ name: Build and Publish Docker Image
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
       - name: Extract version from config.json
         id: version
         run: |
-          VERSION=$(cat config.json | grep '"version"' | cut -d'"' -f4)
+          VERSION=$(python3 -c "import json; print(json.load(open('config.json'))['version'])")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build and push
