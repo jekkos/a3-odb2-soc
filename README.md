@@ -28,7 +28,7 @@ Reads HV SOC and available energy from Audi A3 PHEV via BLE ELM327 and exposes i
 
 1. Go to **Settings → Apps → Install app**
 2. Click **⋮ → Repositories → Add**
-3. Paste: `https://github.com/jekkos/a3-odbd2-soc`
+3. Paste: `https://github.com/jekkos/a3-odb2-soc`
 4. Click **Add**
 5. Find **A3 PHEV HV SOC** and click **Install**
 
@@ -124,19 +124,19 @@ This app uses the new `config.yaml` format. See the [official HA docs](https://w
 
 ### Build locally
 ```bash
-docker build -t a3-odbd2-soc .
+docker build -t a3-odb2-soc .
 ```
 
 ### Run locally
 ```bash
-docker run -d --name a3-odbd2-soc \
+docker run -d --name a3-odb2-soc \
   --network host \
   -e MQTT_HOST=your-broker \
   -e MQTT_USERNAME=your-username \
   -e MQTT_PASSWORD=your-password \
   -e BLE_MAC=your-ble-mac \
   -e NET_USABLE_KWH=12.4 \
-  a3-odbd2-soc
+  a3-odb2-soc
 ```
 
 ## License
